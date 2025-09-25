@@ -9,7 +9,7 @@
     <version>3.9.0</version>
 
     <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
+    <url>https://www.toray.cn/</url>
     <description>多丽管理系统</description>
 
     <properties>
@@ -222,12 +222,12 @@
     </dependencyManagement>
 
     <modules>
-        <module>ruoyi-admin</module>
-        <module>ruoyi-framework</module>
-        <module>ruoyi-system</module>
-        <module>ruoyi-quartz</module>
-        <module>ruoyi-generator</module>
-        <module>ruoyi-common</module>
+        <module>duoli-admin</module>
+        <module>duoli-framework</module>
+        <module>duoli-system</module>
+        <module>duoli-quartz</module>
+        <module>duoli-generator</module>
+        <module>duoli-common</module>
     </modules>
     <packaging>pom</packaging>
 
