@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EquipmentInfoMapper">
+    
+    <resultMap type="EquipmentInfo" id="EquipmentInfoResult">
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentCode"    column="equipment_code"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="model"    column="model"    />
+        <result property="brand"    column="brand"    />
+        <result property="location"    column="location"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <result property="warrantyExpire"    column="warranty_expire"    />
+        <result property="status"    column="status"    />
+        <result property="specifications"    column="specifications"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectEquipmentInfoVo">
+        select equipment_id, equipment_code, equipment_name, model, brand, location, dept_id, purchase_date, warranty_expire, status, specifications, create_by, create_time, update_by, update_time, remark from equipment_info
+    </sql>
+
+    <select id="selectEquipmentInfoList" parameterType="EquipmentInfo" resultMap="EquipmentInfoResult">
+        <include refid="selectEquipmentInfoVo"/>
+        <where>  
+            <if test="equipmentCode != null  and equipmentCode != ''"> and equipment_code = #{equipmentCode}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="purchaseDate != null "> and purchase_date = #{purchaseDate}</if>
+            <if test="warrantyExpire != null "> and warranty_expire = #{warrantyExpire}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="specifications != null  and specifications != ''"> and specifications = #{specifications}</if>
+        </where>
+    </select>
+    
+    <select id="selectEquipmentInfoByEquipmentId" parameterType="String" resultMap="EquipmentInfoResult">
+        <include refid="selectEquipmentInfoVo"/>
+        where equipment_id = #{equipmentId}
+    </select>
+
+    <insert id="insertEquipmentInfo" parameterType="EquipmentInfo">
+        insert into equipment_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="equipmentId != null and equipmentId != ''">equipment_id,</if>
+            <if test="equipmentCode != null and equipmentCode != ''">equipment_code,</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name,</if>
+            <if test="model != null">model,</if>
+            <if test="brand != null">brand,</if>
+            <if test="location != null">location,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="purchaseDate != null">purchase_date,</if>
+            <if test="warrantyExpire != null">warranty_expire,</if>
+            <if test="status != null">status,</if>
+            <if test="specifications != null">specifications,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="equipmentId != null and equipmentId != ''">#{equipmentId},</if>
+            <if test="equipmentCode != null and equipmentCode != ''">#{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">#{equipmentName},</if>
+            <if test="model != null">#{model},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="location != null">#{location},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="purchaseDate != null">#{purchaseDate},</if>
+            <if test="warrantyExpire != null">#{warrantyExpire},</if>
+            <if test="status != null">#{status},</if>
+            <if test="specifications != null">#{specifications},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEquipmentInfo" parameterType="EquipmentInfo">
+        update equipment_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="equipmentCode != null and equipmentCode != ''">equipment_code = #{equipmentCode},</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="purchaseDate != null">purchase_date = #{purchaseDate},</if>
+            <if test="warrantyExpire != null">warranty_expire = #{warrantyExpire},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="specifications != null">specifications = #{specifications},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where equipment_id = #{equipmentId}
+    </update>
+
+    <delete id="deleteEquipmentInfoByEquipmentId" parameterType="String">
+        delete from equipment_info where equipment_id = #{equipmentId}
+    </delete>
+
+    <delete id="deleteEquipmentInfoByEquipmentIds" parameterType="String">
+        delete from equipment_info where equipment_id in 
+        <foreach item="equipmentId" collection="array" open="(" separator="," close=")">
+            #{equipmentId}
+        </foreach>
+    </delete>
+</mapper>
