@@ -5,6 +5,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.util.CollectionUtils;
+import com.ruoyi.common.utils.uuid.IdUtils;
 #foreach ($column in $columns)
 #if($column.javaField == 'createTime' || $column.javaField == 'updateTime')
 import com.ruoyi.common.utils.DateUtils;
@@ -74,7 +75,20 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
         if (!CollectionUtils.isEmpty(${className}s)) {
             try {
                 for (int i = 0; i < ${className}s.size(); i++) {
-                    int row = ${className}Mapper.insert${ClassName}(${className}s.get(i));
+                    ${ClassName} ${className} = ${className}s.get(i);
+                    // 生成主键ID（仅对String类型主键）
+#if($pkColumn.javaType == 'String')
+                    if (${className}.get${pkColumn.capJavaField}() == null || ${className}.get${pkColumn.capJavaField}().isEmpty()) {
+                        ${className}.set${pkColumn.capJavaField}(IdUtils.fastSimpleUUID());
+                    }
+#end
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime')
+                    ${className}.setCreateTime(DateUtils.getNowDate());
+#end
+#end
+
+                    ${className}Mapper.insert${ClassName}(${className});
                     // 防止内存溢出，没100次提交一次,并清除缓存
                     boolean bool = (i >0 && i%3 == 0) || i == ${className}s.size() - 1;
                     if (bool){
@@ -89,7 +103,6 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
                 sqlSession.rollback();
             }finally {
                 sqlSession.close();
-                return count;
             }
         }
         return count;
@@ -107,6 +120,12 @@ public class ${ClassName}ServiceImpl implements I${ClassName}Service
     @Override
     public int insert${ClassName}(${ClassName} ${className})
     {
+        // 生成主键ID（仅对String类型主键）
+#if($pkColumn.javaType == 'String')
+        if (${className}.get${pkColumn.capJavaField}() == null || ${className}.get${pkColumn.capJavaField}().isEmpty()) {
+            ${className}.set${pkColumn.capJavaField}(IdUtils.fastSimpleUUID());
+        }
+#end
 #foreach ($column in $columns)
 #if($column.javaField == 'createTime')
         ${className}.setCreateTime(DateUtils.getNowDate());

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RepairOrderMapper">
+
+    <resultMap type="RepairOrder" id="RepairOrderResult">
+        <result property="orderId"    column="order_id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="title"    column="title"    />
+        <result property="reporterId"    column="reporter_id"    />
+        <result property="reporterName"    column="reporter_name"    />
+        <result property="reporterPhone"    column="reporter_phone"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="department"    column="department"    />
+        <result property="location"    column="location"    />
+        <result property="equipmentId"    column="equipment_id"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="faultLevel"    column="fault_level"    />
+        <result property="faultLevelDesc"    column="fault_level_desc"    />
+        <result property="faultDescription"    column="fault_description"    />
+        <result property="faultImages"    column="fault_images"    />
+        <result property="status"    column="status"    />
+        <result property="priority"    column="priority"    />
+        <result property="assignedTo"    column="assigned_to"    />
+        <result property="repairStartTime"    column="repair_start_time"    />
+        <result property="repairEndTime"    column="repair_end_time"    />
+        <result property="repairDuration"    column="repair_duration"    />
+        <result property="repairResult"    column="repair_result"    />
+        <result property="repairCost"    column="repair_cost"    />
+        <result property="satisfactionRating"    column="satisfaction_rating"    />
+        <result property="satisfactionComment"    column="satisfaction_comment"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectRepairOrderVo">
+        select order_id, order_no, title, reporter_id, reporter_name, reporter_phone, dept_id, department, location, equipment_id, equipment_model, fault_level, fault_level_desc, fault_description, fault_images, status, priority, assigned_to, repair_start_time, repair_end_time, repair_duration, repair_result, repair_cost, satisfaction_rating, satisfaction_comment, create_by, create_time, update_by, update_time, remark from repair_order
+    </sql>
+
+    <select id="selectRepairOrderList" parameterType="RepairOrder" resultMap="RepairOrderResult">
+        <include refid="selectRepairOrderVo"/>
+        <where>
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="reporterId != null "> and reporter_id = #{reporterId}</if>
+            <if test="reporterName != null  and reporterName != ''"> and reporter_name like concat('%', #{reporterName}, '%')</if>
+            <if test="reporterPhone != null  and reporterPhone != ''"> and reporter_phone = #{reporterPhone}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="department != null  and department != ''"> and department = #{department}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="equipmentId != null "> and equipment_id = #{equipmentId}</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and equipment_model = #{equipmentModel}</if>
+            <if test="faultLevel != null  and faultLevel != ''"> and fault_level = #{faultLevel}</if>
+            <if test="faultLevelDesc != null  and faultLevelDesc != ''"> and fault_level_desc = #{faultLevelDesc}</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and fault_description = #{faultDescription}</if>
+            <if test="faultImages != null  and faultImages != ''"> and fault_images = #{faultImages}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="assignedTo != null "> and assigned_to = #{assignedTo}</if>
+            <if test="repairStartTime != null "> and repair_start_time = #{repairStartTime}</if>
+            <if test="repairEndTime != null "> and repair_end_time = #{repairEndTime}</if>
+            <if test="repairDuration != null "> and repair_duration = #{repairDuration}</if>
+            <if test="repairResult != null  and repairResult != ''"> and repair_result = #{repairResult}</if>
+            <if test="repairCost != null "> and repair_cost = #{repairCost}</if>
+            <if test="satisfactionRating != null "> and satisfaction_rating = #{satisfactionRating}</if>
+            <if test="satisfactionComment != null  and satisfactionComment != ''"> and satisfaction_comment = #{satisfactionComment}</if>
+        </where>
+    </select>
+
+    <select id="selectRepairOrderByOrderId" parameterType="String" resultMap="RepairOrderResult">
+        <include refid="selectRepairOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+
+    <insert id="insertRepairOrder" parameterType="RepairOrder">
+        insert into repair_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="reporterId != null">reporter_id,</if>
+            <if test="reporterName != null and reporterName != ''">reporter_name,</if>
+            <if test="reporterPhone != null and reporterPhone != ''">reporter_phone,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="department != null">department,</if>
+            <if test="location != null and location != ''">location,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+            <if test="equipmentModel != null">equipment_model,</if>
+            <if test="faultLevel != null and faultLevel != ''">fault_level,</if>
+            <if test="faultLevelDesc != null">fault_level_desc,</if>
+            <if test="faultDescription != null and faultDescription != ''">fault_description,</if>
+            <if test="faultImages != null">fault_images,</if>
+            <if test="status != null">status,</if>
+            <if test="priority != null">priority,</if>
+            <if test="assignedTo != null">assigned_to,</if>
+            <if test="repairStartTime != null">repair_start_time,</if>
+            <if test="repairEndTime != null">repair_end_time,</if>
+            <if test="repairDuration != null">repair_duration,</if>
+            <if test="repairResult != null">repair_result,</if>
+            <if test="repairCost != null">repair_cost,</if>
+            <if test="satisfactionRating != null">satisfaction_rating,</if>
+            <if test="satisfactionComment != null">satisfaction_comment,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="reporterId != null">#{reporterId},</if>
+            <if test="reporterName != null and reporterName != ''">#{reporterName},</if>
+            <if test="reporterPhone != null and reporterPhone != ''">#{reporterPhone},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="department != null">#{department},</if>
+            <if test="location != null and location != ''">#{location},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+            <if test="equipmentModel != null">#{equipmentModel},</if>
+            <if test="faultLevel != null and faultLevel != ''">#{faultLevel},</if>
+            <if test="faultLevelDesc != null">#{faultLevelDesc},</if>
+            <if test="faultDescription != null and faultDescription != ''">#{faultDescription},</if>
+            <if test="faultImages != null">#{faultImages},</if>
+            <if test="status != null">#{status},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="assignedTo != null">#{assignedTo},</if>
+            <if test="repairStartTime != null">#{repairStartTime},</if>
+            <if test="repairEndTime != null">#{repairEndTime},</if>
+            <if test="repairDuration != null">#{repairDuration},</if>
+            <if test="repairResult != null">#{repairResult},</if>
+            <if test="repairCost != null">#{repairCost},</if>
+            <if test="satisfactionRating != null">#{satisfactionRating},</if>
+            <if test="satisfactionComment != null">#{satisfactionComment},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRepairOrder" parameterType="RepairOrder">
+        update repair_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="reporterId != null">reporter_id = #{reporterId},</if>
+            <if test="reporterName != null and reporterName != ''">reporter_name = #{reporterName},</if>
+            <if test="reporterPhone != null and reporterPhone != ''">reporter_phone = #{reporterPhone},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="location != null and location != ''">location = #{location},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+            <if test="equipmentModel != null">equipment_model = #{equipmentModel},</if>
+            <if test="faultLevel != null and faultLevel != ''">fault_level = #{faultLevel},</if>
+            <if test="faultLevelDesc != null">fault_level_desc = #{faultLevelDesc},</if>
+            <if test="faultDescription != null and faultDescription != ''">fault_description = #{faultDescription},</if>
+            <if test="faultImages != null">fault_images = #{faultImages},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="assignedTo != null">assigned_to = #{assignedTo},</if>
+            <if test="repairStartTime != null">repair_start_time = #{repairStartTime},</if>
+            <if test="repairEndTime != null">repair_end_time = #{repairEndTime},</if>
+            <if test="repairDuration != null">repair_duration = #{repairDuration},</if>
+            <if test="repairResult != null">repair_result = #{repairResult},</if>
+            <if test="repairCost != null">repair_cost = #{repairCost},</if>
+            <if test="satisfactionRating != null">satisfaction_rating = #{satisfactionRating},</if>
+            <if test="satisfactionComment != null">satisfaction_comment = #{satisfactionComment},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="deleteRepairOrderByOrderId" parameterType="String">
+        delete from repair_order where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteRepairOrderByOrderIds" parameterType="String">
+        delete from repair_order where order_id in
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+</mapper>
