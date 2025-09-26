@@ -29,7 +29,7 @@
       <view class="mine-actions grid col-4 text-center">
         <view class="action-item" @click="handleJiaoLiuQun">
           <view class="iconfont icon-friendfill text-pink icon"></view>
-          <text class="text">交流群</text>
+          <text class="text">我的车衣报修申请</text>
         </view>
         <view class="action-item" @click="handleBuilding">
           <view class="iconfont icon-service text-blue icon"></view>
@@ -114,7 +114,7 @@
         this.$tab.navigateTo('/pages/mine/about/index')
       },
       handleJiaoLiuQun() {
-        this.$modal.showToast('模块建设中~')
+        this.$tab.navigateTo('/pages/mine/repairOrders/index')
       },
       handleBuilding() {
         this.$modal.showToast('模块建设中~')

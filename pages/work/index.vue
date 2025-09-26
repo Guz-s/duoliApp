@@ -76,14 +76,14 @@
             </uni-grid>
           </view>
           <view v-else-if="index === 3" class="grid-body">
-            <uni-grid :column="4" :showBorder="false" @change="changeGrid">
-              <uni-grid-item>
-                <view class="grid-item-box">
+            <uni-grid :column="4" :showBorder="false">
+              <uni-grid-item >
+                <view class="grid-item-box"  @click="goThree('/pages/work/carWarranty/index')">
                   <u-icon name="error-circle-fill" size="30"></u-icon>
                   <text class="text">衣车报修</text>
                 </view>
               </uni-grid-item>
-              <uni-grid-item>
+              <uni-grid-item @change="changeGrid">
                 <view class="grid-item-box">
                   <uni-icons type="gear-filled" size="30"></uni-icons>
                   <text class="text">宿舍管理</text>
@@ -131,6 +131,8 @@
   import UniGridItem from "@/uni_modules/uni-grid/components/uni-grid-item/uni-grid-item.vue";
   import UniIcons from "@/uni_modules/uni-icons/components/uni-icons/uni-icons.vue";
   import UniGrid from "@/uni_modules/uni-grid/components/uni-grid/uni-grid.vue";
+  import { getUserProfile } from "@/api/system/user";
+  import { listRepairData } from "@/api/repair/repair";
 
   export default {
     components: { UniGrid, UniIcons, UniGridItem, UniSection },
@@ -170,6 +172,7 @@
         ]
       }
     },
+    onLoad() {},
     mounted() {
       // 确保初始状态正确
       this.activeNavIndex = 0;
@@ -195,6 +198,11 @@
       },
       changeGrid(e) {
         this.$modal.showToast('模块建设中~')
+      },
+      goThree(url) {
+        uni.navigateTo({
+          url: url
+        })
       },
       // 添加纵向导航切换方法
       changeNav(index) {

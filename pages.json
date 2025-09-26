@@ -21,6 +21,31 @@
       "navigationBarTitleText": "工作台"
     }
   }, {
+    "path": "pages/work/carWarranty/index",
+    "style": {
+      "navigationBarTitleText": "衣车报修"
+    }
+  }, {
+    "path": "pages/repair/index",
+    "style": {
+      "navigationBarTitleText": "维修管理"
+    }
+  }, {
+    "path": "pages/repair/orders/index",
+    "style": {
+      "navigationBarTitleText": "工单管理"
+    }
+  }, {
+    "path": "pages/repair/orders/detail",
+    "style": {
+      "navigationBarTitleText": "工单详情"
+    }
+  }, {
+    "path": "pages/repair/info/index",
+    "style": {
+      "navigationBarTitleText": "个人信息"
+    }
+  }, {
     "path": "pages/mine/index",
     "style": {
       "navigationBarTitleText": "我的"
@@ -59,6 +84,11 @@
     "path": "pages/mine/about/index",
     "style": {
       "navigationBarTitleText": "关于我们"
+    }
+  }, {
+    "path": "pages/mine/repairOrders/index",
+    "style": {
+      "navigationBarTitleText": "我的报修申请"
     }
   }, {
     "path": "pages/common/webview/index",

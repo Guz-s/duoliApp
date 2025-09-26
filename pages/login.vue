@@ -122,8 +122,18 @@
       loginSuccess(result) {
         // 设置用户信息
         this.$store.dispatch('GetInfo').then(res => {
-          this.$tab.reLaunch('/pages/index')
+          // 检查是否为维修人员账号
+          if (this.isRepairAccount(this.loginForm.username)) {
+            this.$tab.reLaunch('/pages/repair/index')
+          } else {
+            this.$tab.reLaunch('/pages/index')
+          }
         })
+      },
+      // 判断是否为维修人员账号
+      isRepairAccount(username) {
+        // 维修人员账号规则：以repair_开头或包含repair关键字
+        return username.startsWith('repair_') || username.includes('repair')
       }
     }
   }

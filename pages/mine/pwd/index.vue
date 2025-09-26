@@ -66,6 +66,7 @@
         this.$refs.form.validate().then(res => {
           updateUserPwd(this.user.oldPassword, this.user.newPassword).then(response => {
             this.$modal.msgSuccess("修改成功")
+            uni.navigateBack()
           })
         })
       }
