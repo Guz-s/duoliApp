@@ -1,227 +1,46 @@
 <script>
+import { getRepairByCode, listRepairData } from "@/api/repair/repair";
+import { processFaultImages } from "@/utils/dataConverter";
+
 export default {
   name: "RepairOrders",
   data() {
     return {
+      repairList:[],
       currentTab: 0,
       tabList: [
-        { name: '已申请(4)' },
-        { name: '待处理(3)' },
-        { name: '处理中(2)' },
-        { name: '已完成(5)' },
-        { name: '已取消(1)' }
+        { name: '待处理' },
+        { name: '处理中' },
+        { name: '已完成' },
+        { name: '已取消' }
       ],
-      orders: {
-        applied: [
-          {
-            id: 101,
-            orderNo: 'A20241225001',
-            title: 'JUKI DDL-8700 断线故障',
-            reporter: '张三',
-            phone: '13800138001',
-            department: '一车间缝制线A组',
-            location: '3号厂房 2楼 设备区',
-            equipmentModel: 'JUKI DDL-8700',
-            faultLevel: '紧急',
-            faultDescription: '设备在运行过程中频繁断线，影响生产效率，需要尽快处理',
-            createTime: '2024-12-25 14:30',
-            images: ['/static/images/banner/duolidamen.png'],
-            otherSeverity: ''
-          },
-          {
-            id: 102,
-            orderNo: 'A20241224002',
-            title: '兄弟牌缝纫机异响',
-            reporter: '李四',
-            phone: '13800138002',
-            department: '二车间缝制线B组',
-            location: '1号厂房 1楼 A组',
-            equipmentModel: '兄弟牌缝纫机',
-            faultLevel: '较急',
-            faultDescription: '机器运行时发出异常噪音，需要检查维修',
-            createTime: '2024-12-24 10:20',
-            images: ['/static/images/banner/TORAYLogo.jpg'],
-            otherSeverity: ''
-          },
-          {
-            id: 103,
-            orderNo: 'A20241223003',
-            title: '重机缝纫机卡线',
-            reporter: '王五',
-            phone: '13800138003',
-            department: '三车间缝制线C组',
-            location: '2号厂房 3楼 B组',
-            equipmentModel: '重机缝纫机',
-            faultLevel: '一般',
-            faultDescription: '缝纫机经常卡线，已影响正常生产进度',
-            createTime: '2024-12-23 16:45',
-            images: [],
-            otherSeverity: ''
-          },
-          {
-            id: 104,
-            orderNo: 'A20241222004',
-            title: '飞马缝纫机跳线',
-            reporter: '赵六',
-            phone: '13800138004',
-            department: '四车间缝制线D组',
-            location: '3号厂房 1楼 C组',
-            equipmentModel: '飞马缝纫机',
-            faultLevel: '其他',
-            faultDescription: '缝纫机跳线问题，需要专业技术人员检查',
-            createTime: '2024-12-22 09:15',
-            images: [],
-            otherSeverity: '需要更换专用配件'
-          }
-        ],
-        pending: [
-          {
-            id: 1,
-            orderNo: 'R20241225001',
-            title: 'JUKI DDL-8700 断线故障',
-            location: '3号厂房 2楼 设备区',
-            equipmentModel: 'JUKI DDL-8700',
-            faultLevel: '紧急',
-            faultDescription: '设备在运行过程中频繁断线，影响生产效率',
-            createTime: '2024-12-25 14:30',
-            images: ['/static/images/banner/duolidamen.png']
-          },
-          {
-            id: 2,
-            orderNo: 'R20241224002',
-            title: '兄弟牌缝纫机异响',
-            location: '1号厂房 1楼 A组',
-            equipmentModel: '兄弟牌缝纫机',
-            faultLevel: '较急',
-            faultDescription: '机器运行时发出异常噪音，需要检查',
-            createTime: '2024-12-24 10:20',
-            images: ['/static/images/banner/TORAYLogo.jpg']
-          },
-          {
-            id: 3,
-            orderNo: 'R20241223003',
-            title: '重机缝纫机卡线',
-            location: '2号厂房 3楼 B组',
-            equipmentModel: '重机缝纫机',
-            faultLevel: '一般',
-            faultDescription: '缝纫机经常卡线，已影响正常生产',
-            createTime: '2024-12-23 16:45',
-            images: []
-          }
-        ],
-        processing: [
-          {
-            id: 4,
-            orderNo: 'R20241222001',
-            title: '飞马缝纫机跳线',
-            location: '3号厂房 1楼 C组',
-            equipmentModel: '飞马缝纫机',
-            faultLevel: '紧急',
-            faultDescription: '缝纫机跳线严重，无法正常缝制',
-            createTime: '2024-12-22 09:15',
-            images: []
-          },
-          {
-            id: 5,
-            orderNo: 'R20241221002',
-            title: '杰克缝纫机噪音',
-            location: '2号厂房 2楼 B组',
-            equipmentModel: '杰克缝纫机',
-            faultLevel: '较急',
-            faultDescription: '设备运行时噪音异常，需要维修',
-            createTime: '2024-12-21 15:30',
-            images: []
-          }
-        ],
-        completed: [
-          {
-            id: 6,
-            orderNo: 'R20241220001',
-            title: '重机锁眼机故障',
-            location: '1号厂房 3楼 A组',
-            equipmentModel: '重机锁眼机',
-            faultLevel: '一般',
-            faultDescription: '锁眼机无法正常工作',
-            createTime: '2024-12-20 11:20',
-            completeTime: '2024-12-20 16:45',
-            images: []
-          },
-          {
-            id: 7,
-            orderNo: 'R20241219002',
-            title: 'JUKI包缝机断线',
-            location: '3号厂房 2楼 D组',
-            equipmentModel: 'JUKI包缝机',
-            faultLevel: '紧急',
-            faultDescription: '包缝机频繁断线，影响生产',
-            createTime: '2024-12-19 14:10',
-            completeTime: '2024-12-19 18:30',
-            images: []
-          },
-          {
-            id: 8,
-            orderNo: 'R20241218003',
-            title: '兄弟牌拷边机异响',
-            location: '2号厂房 1楼 C组',
-            equipmentModel: '兄弟牌拷边机',
-            faultLevel: '较急',
-            faultDescription: '拷边机运行时发出异常声音',
-            createTime: '2024-12-18 10:45',
-            completeTime: '2024-12-18 15:20',
-            images: []
-          },
-          {
-            id: 9,
-            orderNo: 'R20241217004',
-            title: '飞马平缝机卡线',
-            location: '1号厂房 2楼 B组',
-            equipmentModel: '飞马平缝机',
-            faultLevel: '一般',
-            faultDescription: '平缝机经常卡线，需要调整',
-            createTime: '2024-12-17 16:30',
-            completeTime: '2024-12-17 20:15',
-            images: []
-          },
-          {
-            id: 10,
-            orderNo: 'R20241216005',
-            title: '杰克绷缝机跳线',
-            location: '3号厂房 3楼 A组',
-            equipmentModel: '杰克绷缝机',
-            faultLevel: '较急',
-            faultDescription: '绷缝机跳线问题，影响质量',
-            createTime: '2024-12-16 13:25',
-            completeTime: '2024-12-16 17:40',
-            images: []
-          }
-        ],
-        cancelled: [
-          {
-            id: 11,
-            orderNo: 'R20241215001',
-            title: '重机钉扣机故障',
-            location: '2号厂房 3楼 D组',
-            equipmentModel: '重机钉扣机',
-            faultLevel: '一般',
-            faultDescription: '钉扣机无法正常工作',
-            createTime: '2024-12-15 09:30',
-            cancelTime: '2024-12-15 10:15',
-            cancelReason: '设备已更换，无需维修',
-            images: []
-          }
-        ]
-      }
     }
+  },
+  onShow() {
+    // 每次页面显示时刷新数据，包括从编辑页面返回时
+    this.getRepairListFun();
   },
   computed: {
     currentOrders() {
-      const statusMap = ['applied', 'pending', 'processing', 'completed', 'cancelled']
-      return this.orders[statusMap[this.currentTab]] || []
+      // 根据 status 过滤数据：0-待处理，1-处理中，2-已完成，3-已取消
+      // 确保 repairList 是数组，如果不是则返回空数组
+      if (!this.repairList || !Array.isArray(this.repairList)) {
+        console.info('repairList不是数组或为空:', this.repairList)
+        return []
+      }
+
+      // 处理 status 可能是字符串的情况
+      const filtered = this.repairList.filter(item => {
+        const itemStatus = parseInt(item.status)
+        const match = itemStatus === this.currentTab
+        return match
+      })
+      return filtered
     },
     tabLineLeft() {
-      // 5个标签页，每个标签页宽度为 100% / 5 = 20%
-      // 以rpx为单位，屏幕宽度750rpx，每个标签宽度150rpx
-      const tabWidth = 750 / 5 // 150rpx
+      // 4个标签页，每个标签页宽度为 100% / 4 = 25%
+      // 以rpx为单位，屏幕宽度750rpx，每个标签宽度187.5rpx
+      const tabWidth = 750 / 4 // 187.5rpx
       const lineWidth = 60 // 下划线宽度60rpx
       const offset = (tabWidth - lineWidth) / 2 // 居中偏移量
       return (this.currentTab * tabWidth) + offset
@@ -231,37 +50,51 @@ export default {
     }
   },
   methods: {
+    // 处理故障图片数据
+    getFaultImages(order) {
+      return processFaultImages(order.faultImages)
+    },
+
+    // 获取工单列表
+    getRepairListFun(){
+      listRepairData().then(res => {
+          this.repairList = res.rows
+          console.info('repairList:', this.repairList)
+        } ).catch(err => {
+          this.repairList = []
+          console.error('获取工单列表失败:', err)
+        })
+    },
     // 选项卡切换
     tabChange(index) {
       this.currentTab = index
     },
     // 查看工单详情
     viewOrderDetail(order) {
-      // 如果是已申请状态，跳转到编辑页面
-      if (this.currentTab === 0) {
-        this.editApplication(order)
+      console.info('查看工单详情:', order)
+      // 如果是待处理状态，跳转到编辑页面
+      if (order[0].status == 0) {
+        this.editApplication(order[0])
         return
       }
-      
-      uni.showModal({
-        title: '工单详情',
-        content: `工单号：${order.orderNo}\n状态：${this.getStatusText(this.currentTab)}\n描述：${order.faultDescription}`,
-        showCancel: false
+
+      // 其他状态跳转到详情页面查看
+      uni.navigateTo({
+        url: `/pages/repair/orders/detail?id=${order[0].orderId}&from=myOrders`
       })
     },
     // 编辑申请
     editApplication(order) {
-      // 将申请数据存储到全局变量或本地存储，供编辑页面使用
-      uni.setStorageSync('editingOrder', order)
-      
-      // 跳转到报修申请页面进行编辑
+      console.info('编辑工单:', order)
+
+      // 跳转到报修申请页面进行编辑，传递工单ID
       uni.navigateTo({
-        url: '/pages/work/carWarranty/index?mode=edit&id=' + order.id
+        url: `/pages/work/carWarranty/index?mode=edit&orderId=${order[0].orderId}`
       })
     },
     // 获取状态文本
     getStatusText(statusIndex) {
-      const statusMap = ['已申请', '待处理', '处理中', '已完成', '已取消']
+      const statusMap = ['待处理', '处理中', '已完成', '已取消']
       return statusMap[statusIndex] || '未知'
     },
     // 预览图片
@@ -275,11 +108,22 @@ export default {
     // 获取故障等级颜色
     getFaultLevelColor(level) {
       const colorMap = {
-        '紧急': '#ff4757',
-        '较急': '#ffa502',
-        '一般': '#2ed573'
+        0: '#FF3B30', // 严重 - 红色
+        1: '#FF9500', // 较急 - 橙色
+        2: '#34C759', // 一般 - 绿色
+        3: '#8E8E93'  // 其他 - 灰色
       }
       return colorMap[level] || '#666'
+    },
+    // 获取故障等级文本
+    getFaultLevelText(level) {
+      const textMap = {
+        0: '严重',
+        1: '较急',
+        2: '一般',
+        3: '其他'
+      }
+      return textMap[level] || '未知'
     }
   }
 }
@@ -290,9 +134,9 @@ export default {
     <!-- 状态选项卡 -->
     <view class="tabs-container">
       <view class="tabs-wrapper">
-        <view 
-          class="tab-item" 
-          v-for="(tab, index) in tabList" 
+        <view
+          class="tab-item"
+          v-for="(tab, index) in tabList"
           :key="index"
           :class="{ 'active': currentTab === index }"
           @click="tabChange(index)"
@@ -306,53 +150,56 @@ export default {
     <!-- 工单列表 -->
     <view class="orders-container">
       <view class="orders-list" v-if="currentOrders.length > 0">
-        <view 
-          class="order-item" 
-          v-for="order in currentOrders" 
-          :key="order.id" 
-          @click="viewOrderDetail(order)"
+        <view
+          class="order-item"
+          v-for="order in currentOrders"
+          :key="order.id"
+          @click="viewOrderDetail(currentOrders)"
         >
           <view class="order-header">
-            <text class="order-id">#{{ order.orderNo }}</text>
-            <view class="order-status" :class="'status-' + currentTab">
-              {{ getStatusText(currentTab) }}
+            <text class="order-id">#{{ order.orderNo}}</text>
+            <view class="order-status" :class="'status-' + order.status">
+              {{ getStatusText(order.status) }}
             </view>
           </view>
-          
+
           <view class="order-content">
-            <text class="order-title">{{ order.title }}</text>
+            <text class="order-title">{{ order.faultDescription }}</text>
             <view class="order-info">
-              <text class="info-item">📍 {{ order.location }}</text>
-              <text class="info-item">🔧 {{ order.equipmentModel }}</text>
+              <text class="info-item">报修地点： {{ order.location }}</text>
+              <text class="info-item">设备型号： {{ order.equipmentModel }}</text>
               <text class="info-item" :style="{ color: getFaultLevelColor(order.faultLevel) }">
-                ⚡ {{ order.faultLevel }}
+                故障等级：{{ getFaultLevelText(order.faultLevel) }}
+              </text>
+              <!-- 当故障等级为其他时，显示其他故障描述 -->
+              <text class="info-item fault-desc-other" v-if="order.faultLevel == 3 && order.faultLevelDesc">
+                其他描述：{{ order.faultLevelDesc }}
               </text>
             </view>
-            <text class="order-desc">{{ order.faultDescription }}</text>
+            <!--<text class="order-desc">{{ order.faultDescription }}</text>-->
           </view>
 
           <view class="order-footer">
             <text class="order-time">{{ order.createTime }}</text>
             <view class="order-actions">
-              <text class="action-text" v-if="currentTab === 0">点击编辑</text>
-              <text class="action-text" v-else-if="currentTab === 1">等待处理</text>
-              <text class="action-text" v-else-if="currentTab === 2">维修中</text>
-              <text class="action-text" v-else-if="currentTab === 3">已完成</text>
-              <text class="action-text" v-else>已取消</text>
+              <text class="action-text" v-if="order.status == 0">点击编辑</text>
+              <text class="action-text" v-else-if="order.status == 1">维修中</text>
+              <text class="action-text" v-else-if="order.status == 2">已完成</text>
+              <text class="action-text" v-else-if="order.status == 3">已取消</text>
             </view>
           </view>
 
           <!-- 图片预览 -->
-          <view class="order-images" v-if="order.images && order.images.length > 0">
-            <image 
-              v-for="(img, index) in order.images.slice(0, 3)" 
+          <view class="order-images" v-if="getFaultImages(order).length > 0">
+            <image
+              v-for="(img, index) in getFaultImages(order).slice(0, 3)"
               :key="index"
-              :src="img" 
+              :src="img"
               class="preview-img"
-              @click.stop="previewImages(order.images, index)"
+              @click.stop="previewImages(getFaultImages(order), index)"
             />
-            <view class="more-images" v-if="order.images.length > 3">
-              +{{ order.images.length - 3 }}
+            <view class="more-images" v-if="getFaultImages(order).length > 3">
+              +{{ getFaultImages(order).length - 3 }}
             </view>
           </view>
         </view>
@@ -360,8 +207,8 @@ export default {
 
       <!-- 空状态 -->
       <view class="empty-state" v-else>
-        <u-empty 
-          mode="data" 
+        <u-empty
+          mode="data"
           text="暂无数据"
           :show="true"
         ></u-empty>
@@ -442,7 +289,7 @@ export default {
       margin-bottom: 24rpx;
 
       .order-id {
-        font-size: 28rpx;
+        font-size: 35rpx;
         font-weight: 600;
         color: #333;
       }
@@ -454,23 +301,19 @@ export default {
         color: #fff;
 
         &.status-0 {
-          background: #5856D6;
+          background: #FF9500; // 待处理 - 橙色
         }
 
         &.status-1 {
-          background: #FF9500;
+          background: #007AFF; // 处理中 - 蓝色
         }
 
         &.status-2 {
-          background: #007AFF;
+          background: #34C759; // 已完成 - 绿色
         }
 
         &.status-3 {
-          background: #34C759;
-        }
-
-        &.status-4 {
-          background: #8E8E93;
+          background: #8E8E93; // 已取消 - 灰色
         }
       }
     }
@@ -494,6 +337,14 @@ export default {
           font-size: 24rpx;
           color: #666;
           margin-bottom: 8rpx;
+        }
+
+        .fault-desc-other {
+          color: #FF9500 !important;
+          font-style: italic;
+          background: #FFF8F0;
+          padding: 8rpx 12rpx;
+          border-radius: 6rpx;
         }
       }
 

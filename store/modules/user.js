@@ -72,7 +72,7 @@ const user = {
             avatar = (isEmpty(avatar)) ? defAva : baseUrl + avatar
           }
           const userid = (isEmpty(user) || isEmpty(user.userId)) ? "" : user.userId
-		  const username = (isEmpty(user) || isEmpty(user.userName)) ? "" : user.userName
+		  const username = (isEmpty(user) || isEmpty(user.nickName)) ? "" : user.nickName
 		  if (res.roles && res.roles.length > 0) {
             commit('SET_ROLES', res.roles)
             commit('SET_PERMISSIONS', res.permissions)

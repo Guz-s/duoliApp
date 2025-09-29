@@ -5,7 +5,7 @@ module.exports = {
   // 应用信息
   appInfo: {
     // 应用名称
-    name: "ruoyi-app",
+    name: "duoli-app",
     // 应用版本
     version: "1.2.0",
     // 应用logo

@@ -2,10 +2,10 @@
   <view class="orders-container">
     <!-- 状态筛选 -->
     <view class="filter-tabs">
-      <view 
-        class="tab-item" 
+      <view
+        class="tab-item"
         :class="{ active: currentStatus === item.value }"
-        v-for="item in statusTabs" 
+        v-for="item in statusTabs"
         :key="item.value"
         @click="switchStatus(item.value)"
       >
@@ -16,50 +16,44 @@
 
     <!-- 工单列表 -->
     <view class="order-list">
-      <view class="order-item" v-for="order in filteredOrders" :key="order.id" @click="goToDetail(order.id)">
+      <view class="order-item" v-for="order in filteredOrders" :key="order.orderId" @click="goToDetail(order.orderId || order.id)">
         <view class="order-header">
-          <text class="order-id">#{{ order.id }}</text>
-          <view class="order-status" :class="order.status">{{ getStatusText(order.status) }}</view>
+          <text class="order-id">#{{ order.orderNo || order.id }}</text>
+          <view class="order-status" :class="'status-' + order.status">{{ getStatusText(order.status) }}</view>
         </view>
-        
+
         <view class="order-content">
-          <text class="order-title">{{ order.title }}</text>
+          <text class="order-title">{{ order.faultDescription || order.title }}</text>
           <view class="order-info">
-            <text class="info-item">📍 {{ order.location }}</text>
-            <text class="info-item">👤 {{ order.reporter }}</text>
-            <text class="info-item">📞 {{ order.phone }}</text>
+            <text class="info-item">报修地点： {{ order.location }}</text>
+            <text class="info-item">设备型号： {{ order.equipmentModel }}</text>
+            <text class="info-item" :style="{ color: getFaultLevelColor(order.faultLevel) }">
+              故障等级：{{ getFaultLevelText(order.faultLevel) }}
+            </text>
+            <!-- 当故障等级为其他时，显示其他故障描述 -->
+            <text class="info-item fault-desc-other" v-if="order.faultLevel == 3 && order.faultLevelDesc">
+              其他描述：{{ order.faultLevelDesc }}
+            </text>
+            <text class="info-item" v-if="order.reporterName">👤 {{ order.reporterName }}</text>
+            <text class="info-item" v-if="order.reporterPhone">📞 {{ order.reporterPhone }}</text>
           </view>
-          <text class="order-desc">{{ order.description }}</text>
         </view>
 
         <view class="order-footer">
           <text class="order-time">{{ order.createTime }}</text>
-          <view class="order-actions">
-            <button 
-              class="action-btn" 
-              :class="{
-                primary: order.status === 'pending',
-                success: order.status === 'processing', 
-                default: order.status === 'completed'
-              }"
-              @click.stop="handleAction(order)"
-            >
-              {{ getActionText(order.status) }}
-            </button>
-          </view>
         </view>
 
         <!-- 图片预览 -->
-        <view class="order-images" v-if="order.images && order.images.length > 0">
-          <image 
-            v-for="(img, index) in order.images.slice(0, 3)" 
+        <view class="order-images" v-if="getFaultImages(order).length > 0">
+          <image
+            v-for="(img, index) in getFaultImages(order).slice(0, 3)"
             :key="index"
-            :src="img" 
+            :src="img"
             class="preview-img"
-            @click.stop="previewImages(order.images, index)"
+            @click.stop="previewImages(getFaultImages(order), index)"
           />
-          <view class="more-images" v-if="order.images.length > 3">
-            +{{ order.images.length - 3 }}
+          <view class="more-images" v-if="getFaultImages(order).length > 3">
+            +{{ getFaultImages(order).length - 3 }}
           </view>
         </view>
       </view>
@@ -74,90 +68,78 @@
 </template>
 
 <script>
+import { getRepairByCode, listRepairData } from "@/api/repair/repair";
+import { processFaultImages } from "@/utils/dataConverter";
+
 export default {
   name: "RepairOrders",
   data() {
     return {
       currentStatus: 'all',
       statusTabs: [
-        { label: '全部', value: 'all', count: 25 },
-        { label: '待处理', value: 'pending', count: 8 },
-        { label: '处理中', value: 'processing', count: 5 },
-        { label: '已完成', value: 'completed', count: 12 }
+        { label: '全部', value: 'all', count: 0 },
+        { label: '待处理', value: 'pending', count: 0 },
+        { label: '处理中', value: 'processing', count: 0 },
+        { label: '已完成', value: 'completed', count: 0 },
+        { label: '已取消', value: 'cancelled', count: 0 }
       ],
-      orders: [
-        {
-          id: 'R2024001',
-          title: 'JUKI DDL-8700 断线故障',
-          location: '3号厂房 2楼 设备区',
-          reporter: '李小明',
-          phone: '138****1234',
-          description: '设备在运行过程中频繁断线，影响生产效率',
-          status: 'pending',
-          createTime: '2024-01-15 14:30',
-          images: ['/static/images/banner/duolidamen.png']
-        },
-        {
-          id: 'R2024002',
-          title: '兄弟牌缝纫机异响',
-          location: '1号厂房 1楼 A组',
-          reporter: '王小红',
-          phone: '139****5678',
-          description: '机器运行时发出异常噪音，需要检查',
-          status: 'processing',
-          createTime: '2024-01-15 10:20',
-          images: ['/static/images/banner/TORAYLogo.jpg']
-        },
-        {
-          id: 'R2024003',
-          title: '重机缝纫机卡线',
-          location: '2号厂房 3楼 B组',
-          reporter: '赵小刚',
-          phone: '137****9012',
-          description: '缝纫机经常卡线，已影响正常生产',
-          status: 'completed',
-          createTime: '2024-01-14 16:45',
-          images: []
-        },
-        {
-          id: 'R2024004',
-          title: '电脑平车速度异常',
-          location: '4号厂房 1楼 C组',
-          reporter: '孙小丽',
-          phone: '136****3456',
-          description: '设备速度不稳定，时快时慢',
-          status: 'pending',
-          createTime: '2024-01-14 09:15',
-          images: []
-        },
-        {
-          id: 'R2024005',
-          title: '包缝机断针',
-          location: '2号厂房 2楼 D组',
-          reporter: '周小强',
-          phone: '135****7890',
-          description: '包缝机频繁断针，需要更换配件',
-          status: 'processing',
-          createTime: '2024-01-13 15:30',
-          images: []
-        }
-      ]
-    }
-  },
-  computed: {
-    filteredOrders() {
-      if (this.currentStatus === 'all') {
-        return this.orders
-      }
-      return this.orders.filter(order => order.status === this.currentStatus)
+      orders: []
     }
   },
   onLoad(options) {
     if (options.status) {
       this.currentStatus = options.status
     }
+    // this.getRepairListFun();
+  },
+  onShow() {
+    // 每次页面显示时刷新数据，包括从编辑页面返回时
+    this.getRepairListFun();
+  },
+  computed: {
+    filteredOrders() {
+      // 确保 orders 是数组，如果不是则返回空数组
+      if (!this.orders || !Array.isArray(this.orders)) {
+        console.info('orders不是数组或为空:', this.orders)
+        return []
+      }
+
+      if (this.currentStatus === 'all') {
+        return this.orders
+      }
+
+      // 状态映射：数字转字符串
+      const statusMapping = {
+        0: 'pending',    // 待处理
+        1: 'processing', // 处理中
+        2: 'completed',  // 已完成
+        3: 'cancelled'   // 已取消
+      }
+
+      return this.orders.filter(order => {
+        const mappedStatus = statusMapping[parseInt(order.status)]
+        return mappedStatus === this.currentStatus
+      })
+    }
   },
   methods: {
+    // 获取工单列表
+    getRepairListFun(){
+      listRepairData().then(res => {
+          this.orders = res.rows || []
+          console.info('orders:', this.orders)
+          this.updateOrderCounts()
+        } ).catch(err => {
+          this.orders = []
+          console.error('获取工单列表失败:', err)
+        })
+    },
+
+    // 处理故障图片数据
+    getFaultImages(order) {
+      return processFaultImages(order.faultImages)
+    },
+
     switchStatus(status) {
       this.currentStatus = status
     },
@@ -172,7 +154,7 @@ export default {
         'processing': () => this.completeRepair(order),
         'completed': () => this.viewDetail(order)
       }
-      
+
       if (actions[order.status]) {
         actions[order.status]()
       }
@@ -215,13 +197,22 @@ export default {
       this.goToDetail(order.id)
     },
     updateOrderCounts() {
+      // 状态映射：数字转字符串
+      const statusMapping = {
+        0: 'pending',    // 待处理
+        1: 'processing', // 处理中
+        2: 'completed',  // 已完成
+        3: 'cancelled'   // 已取消
+      }
+
       const counts = {
         all: this.orders.length,
-        pending: this.orders.filter(o => o.status === 'pending').length,
-        processing: this.orders.filter(o => o.status === 'processing').length,
-        completed: this.orders.filter(o => o.status === 'completed').length
+        pending: this.orders.filter(o => statusMapping[parseInt(o.status)] === 'pending').length,
+        processing: this.orders.filter(o => statusMapping[parseInt(o.status)] === 'processing').length,
+        completed: this.orders.filter(o => statusMapping[parseInt(o.status)] === 'completed').length,
+        cancelled: this.orders.filter(o => statusMapping[parseInt(o.status)] === 'cancelled').length
       }
-      
+
       this.statusTabs.forEach(tab => {
         tab.count = counts[tab.value]
       })
@@ -233,20 +224,61 @@ export default {
       })
     },
     getStatusText(status) {
+      // 支持数字状态和字符串状态
       const statusMap = {
+        // 数字状态
+        0: '待处理',
+        1: '处理中',
+        2: '已完成',
+        3: '已取消',
+        // 字符串状态
         'pending': '待处理',
         'processing': '处理中',
-        'completed': '已完成'
+        'completed': '已完成',
+        'cancelled': '已取消'
       }
       return statusMap[status] || '未知'
     },
+
+    // 获取故障等级颜色
+    getFaultLevelColor(level) {
+      const colorMap = {
+        0: '#FF3B30', // 严重 - 红色
+        1: '#FF9500', // 较急 - 橙色
+        2: '#34C759', // 一般 - 绿色
+        3: '#8E8E93'  // 其他 - 灰色
+      }
+      return colorMap[level] || '#666'
+    },
+
+    // 获取故障等级文本
+    getFaultLevelText(level) {
+      const textMap = {
+        0: '严重',
+        1: '较急',
+        2: '一般',
+        3: '其他'
+      }
+      return textMap[level] || '未知'
+    },
     getActionText(status) {
+      // 状态映射：数字转字符串
+      const statusMapping = {
+        0: 'pending',
+        1: 'processing',
+        2: 'completed',
+        3: 'cancelled'
+      }
+
+      const mappedStatus = statusMapping[parseInt(status)] || status
+
       const actionMap = {
         'pending': '开始维修',
         'processing': '完成维修',
-        'completed': '查看详情'
+        'completed': '查看详情',
+        'cancelled': '已取消'
       }
-      return actionMap[status] || '操作'
+      return actionMap[mappedStatus] || '操作'
     },
   }
 }
@@ -323,6 +355,23 @@ export default {
         color: #fff;
         font-weight: 600;
 
+        &.status-0 {
+          background: #FF9500; // 待处理 - 橙色
+        }
+
+        &.status-1 {
+          background: #007AFF; // 处理中 - 蓝色
+        }
+
+        &.status-2 {
+          background: #34C759; // 已完成 - 绿色
+        }
+
+        &.status-3 {
+          background: #8E8E93; // 已取消 - 灰色
+        }
+
+        // 兼容字符串状态
         &.pending {
           background: #FF9500;
         }
@@ -333,6 +382,10 @@ export default {
 
         &.completed {
           background: #34C759;
+        }
+
+        &.cancelled {
+          background: #8E8E93;
         }
       }
     }
@@ -357,6 +410,14 @@ export default {
           color: #666;
           margin-bottom: 8rpx;
         }
+
+        .fault-desc-other {
+          color: #FF9500 !important;
+          font-style: italic;
+          background: #FFF8F0;
+          padding: 8rpx 12rpx;
+          border-radius: 6rpx;
+        }
       }
 
       .order-desc {
@@ -377,6 +438,11 @@ export default {
       }
 
       .order-actions {
+        .action-text {
+          font-size: 22rpx;
+          color: #007AFF;
+        }
+
         .action-btn {
           padding: 16rpx 32rpx;
           border-radius: 24rpx;

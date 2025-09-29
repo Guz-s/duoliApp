@@ -26,6 +26,12 @@
       "navigationBarTitleText": "衣车报修"
     }
   }, {
+    "path": "pages/work/vehicleBooking/index",
+    "style": {
+      "navigationBarTitleText": "车辆预约",
+      "navigationStyle": "custom"
+    }
+  }, {
     "path": "pages/repair/index",
     "style": {
       "navigationBarTitleText": "维修管理"
@@ -39,11 +45,6 @@
     "path": "pages/repair/orders/detail",
     "style": {
       "navigationBarTitleText": "工单详情"
-    }
-  }, {
-    "path": "pages/repair/info/index",
-    "style": {
-      "navigationBarTitleText": "个人信息"
     }
   }, {
     "path": "pages/mine/index",

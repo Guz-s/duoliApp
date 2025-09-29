@@ -68,7 +68,7 @@
           <view v-else-if="index === 2" class="grid-body">
             <uni-grid :column="4" :showBorder="false" @change="changeGrid">
               <uni-grid-item>
-                <view class="grid-item-box">
+                <view class="grid-item-box" @click="goThree('/pages/work/vehicleBooking/index')">
                   <uni-icons type="calendar-filled" size="30"></uni-icons>
                   <text class="text">车辆预约</text>
                 </view>

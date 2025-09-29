@@ -93,12 +93,30 @@
 
 <style lang="scss" scoped>
   page {
-    background-color: #ffffff;
+    background-color: #f5f6fa;
+  }
+
+  .container {
+    min-height: 100vh;
+    background: #f5f6fa;
+    padding: 20rpx;
   }
 
   .example {
     padding: 15px;
     background-color: #fff;
+    border-radius: 16rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+  }
+
+  button[type="primary"] {
+    background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+    border: none;
+    border-radius: 44rpx;
+    height: 88rpx;
+    font-size: 32rpx;
+    font-weight: 600;
+    box-shadow: 0 6rpx 20rpx rgba(0, 122, 255, 0.3);
   }
 
   .segmented-control {
